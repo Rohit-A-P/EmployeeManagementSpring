@@ -7,8 +7,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ideas2it.customexception.DatabaseNotFound;
 import com.ideas2it.dao.EmployeeDao;
@@ -24,7 +25,13 @@ import com.ideas2it.model.Trainer;
  */
 public class EmployeeDaoImpl implements EmployeeDao {
  
-    private SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+    @Autowired
+    private SessionFactory sessionFactory;
+    
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+    
     private Session session = null;
     
     /**

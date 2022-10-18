@@ -1,435 +1,199 @@
 package com.ideas2it.controller;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.sql.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ideas2it.model.Skill;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.ideas2it.model.Trainee;
 import com.ideas2it.model.Trainer;
-import com.ideas2it.service.impl.EmployeeServiceImpl;
+import com.ideas2it.service.EmployeeService;
 
 /**
  * Servlet implementation class EmployeeController
  */
-public class EmployeeController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+@Controller
+public class EmployeeController {
 
-    private EmployeeServiceImpl employeeServiceImpl = new EmployeeServiceImpl();
-    private Logger logger = LogManager.getLogger(EmployeeController.class);  
+    @Autowired
+    private EmployeeService employeeService;
+    private Logger logger = LogManager.getLogger(EmployeeController.class);
 
+    public void EmployeeServiceImpl(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    @RequestMapping("/")
+    public String Test() {
+        return "SaveTrainee";
+    }
     /**
      * 
-     * it is used to get request and response
+     * directs to trainee form
      * 
-     * @param request, response
-     * @return void
+     * @param model
+     * @return SaveTrainee
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+    @RequestMapping("/SaveTrainee")
+    public String TraineeForm(Model model) {
+        model.addAttribute("command", new Trainee());
+        return ("SaveTrainee");
     }
 
     /**
      * 
-     * it is used to send response
+     * add trainee details to trainee object
      * 
-     * @param request, response
-     * @return void
+     * @param trainee
+     * @return redirect:/viewTrainees
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String action = request.getParameter("flag");
+    @RequestMapping(value = "/insertTrainee", method = RequestMethod.POST)
+    public String insertTrainer(@ModelAttribute("trainee") Trainee trainee) {
 
-        switch (action) {
-        case "insertTrainer":
-            insertTrainer(request, response);
-            break;
-        case "viewTrainers":
-            viewTrainers(request, response);
-            break;
-        case "updateTrainer":
-            updateTrainer(request, response);
-            break;            
-        case "deleteTrainer":
-            deleteTrainer(request, response);
-            break;
-        case "getTrainerById":
-            getTrainerById(request, response);
-            break;
-        case "insertTrainee":
-            insertTrainee(request, response);
-            break;
-        case "viewTrainees":
-            viewAllTrainee(request, response);
-            break;
-        case "updateTrainee":
-            updateTraineeById(request, response);
-            break;
-        case "deleteTrainee":
-            deleteTrainee(request, response);
-            break;
-        case "getTraineeById":
-            getTraineeById(request, response);
-            break; 
-        }
-    }
-
-    /**
-     * 
-     * add trainer details to trainer object
-     * 
-     * @param request, response
-     * @return void
-     */
-    public void insertTrainer(HttpServletRequest request, HttpServletResponse response) {
-
-        int id = 0;
-
-        String name = request.getParameter("name");
-        String bloodGroup = request.getParameter("bloodGroup");
-
-        String date = request.getParameter("dateOfBirth");
-        Date dateOfBirth = Date.valueOf(date);
-
-        String designation = request.getParameter("desgination");
-
-        String gender = request.getParameter("gender");
-
-        String number = request.getParameter("phoneNumber");
-        long phoneNumber = Long.parseLong(number);
-
-        String email = request.getParameter("email");
-
-        String trainerId = "0";
-
-        String year = request.getParameter("trainingSince");
-        int trainingSince = Integer.parseInt(year);
-
-        Trainer trainer = new Trainer(id, name, bloodGroup, designation,
-                dateOfBirth, gender, phoneNumber, email, trainerId, trainingSince);
-
-        id = employeeServiceImpl.insertTrainer(trainer);
-        viewTrainers(request, response);
+        int id = employeeService.insertTrainee(trainee);
+        return ("redirect:/viewTrainees");
     }
 
     /**
      * 
      * shows all trainers
      * 
-     * @param request, response
-     * @return void
+     * @param model
+     * @return viewTrainees
      */
-    public void viewTrainers(HttpServletRequest request, HttpServletResponse response) {
-        List<Trainer> trainers = employeeServiceImpl.viewAllTrainer();
-        request.setAttribute("trainerList", trainers);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ViewTrainers.jsp");
-        try {
-            dispatcher.forward(request, response);
-        } catch (ServletException exception) {
-            exception.printStackTrace();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+    @RequestMapping("/viewTrainees")
+    public String viewTrainees(Model model) {
+        List<Trainee> trainees = employeeService.viewAllTrainee();
+        model.addAttribute("traineeList", trainees);
+        return ("viewTrainees");
     }
-    
+
     /**
      * 
-     * update trainer 
+     * update trainee by id
      * 
-     * @param request, response
-     * @return void
+     * @param trainee
+     * @return redirect:/viewTrainees
      */
-    public void updateTrainer(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/updateTraineeById/{id}", method = RequestMethod.POST)
+    public String updateTraineeById(@ModelAttribute("trainee") Trainee trainee) {
+        employeeService.updateTraineeById(trainee);
+        return ("redirect:/viewTrainees");
+    }
 
-        int id = Integer.parseInt(request.getParameter("id"));
+    /**
+     * 
+     * delete trainee by id
+     * 
+     * @param id
+     * @return redirect:/viewTrainees
+     */
+    @RequestMapping("/deleteTraineeById/{id}")
+    public String deleteTraineeById(@PathVariable int id) {
+        boolean isIdExist = employeeService.deleteTraineeById(id);
+        return ("redirect:/viewTrainees");
+    }
 
-        String name = request.getParameter("name");
-        String bloodGroup = request.getParameter("bloodGroup");
+    /**
+     * 
+     * get trainee by id
+     * 
+     * @param id, model
+     * @return UpdateTrainee
+     */
+    @RequestMapping(value = "/getTraineeById/{id}")
+    public String getTraineeById(@PathVariable int id, Model model) {
+        Trainee trainee = employeeService.getTraineeById(id);
+        model.addAttribute("command", trainee);
+        return ("UpdateTrainee");
+    }
 
-        String date = request.getParameter("dateOfBirth");
-        Date dateOfBirth = Date.valueOf(date);
+    /**
+     * 
+     * directs to trainer form
+     * 
+     * @param model
+     * @return trainerForm
+     */
+    @RequestMapping("/SaveTrainer")
+    public String TrainerForm(Model model) {
+        model.addAttribute("command", new Trainer());
+        return ("SaveTrainer");
+    }
 
-        String designation = request.getParameter("designation");
+    /**
+     * 
+     * add trainer details to trainer object
+     * 
+     * @param trainer
+     * @return redirect:/viewTrainers
+     */
+    @RequestMapping(value = "/insertTrainer", method = RequestMethod.POST)
+    public String insertTrainer(@ModelAttribute("trainer") Trainer trainer) {
 
-        String gender = request.getParameter("gender");
+        int id = employeeService.insertTrainer(trainer);
+        return ("redirect:/viewTrainers");
+    }
 
-        String number = request.getParameter("phoneNumber");
-        long phoneNumber = Long.parseLong(number);
+    /**
+     * 
+     * shows all trainers
+     * 
+     * @param model
+     * @return viewTrainers
+     */
+    @RequestMapping("/viewTrainers")
+    public String viewTrainers(Model model) {
+        List<Trainer> trainers = employeeService.viewAllTrainer();
+        model.addAttribute("trainerList", trainers);
+        return ("viewTrainers");
+    }
 
-        String email = request.getParameter("email");
-
-        String trainerId = "0";
-
-        String year = request.getParameter("trainingSince");
-        int trainingSince = Integer.parseInt(year);
-
-        Trainer trainer = new Trainer(id, name, bloodGroup, designation,
-                dateOfBirth, gender, phoneNumber, email, trainerId, trainingSince);
-
-       employeeServiceImpl.updateTrainerById(trainer);
-       
-       try {
-           response.sendRedirect("http://localhost:8080/EmployeeManagement/TrainerController?flag=viewTrainers");
-       } catch (IOException e) {
-           e.printStackTrace();
-       }  
+    /**
+     * 
+     * update trainer
+     * 
+     * @param trainer
+     * @return redirect:/viewTrainers
+     */
+    @RequestMapping(value = "/updateTrainerById/{id}", method = RequestMethod.POST)
+    public String updateTrainerById(@ModelAttribute("trainer") Trainer trainer) {
+        employeeService.updateTrainerById(trainer);
+        return ("redirect:/viewTrainers");
     }
 
     /**
      * 
      * delete trainer
      * 
-     * @param request, response
-     * @return void
+     * @param id
+     * @return redirect:/viewTrainers
      */
-    public void deleteTrainer(HttpServletRequest request, HttpServletResponse response) {
-        int id = Integer.parseInt(request.getParameter("id"));
-        boolean isIdExist = employeeServiceImpl.deleteTrainerById(id);
-        try {
-            response.sendRedirect("http://localhost:8080/EmployeeManagement/TrainerController?flag=viewTrainers");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  
-   }
+    @RequestMapping("/deleteTrainerById/{id}")
+    public String deleteTrainerById(@PathVariable int id) {
+        boolean isIdExist = employeeService.deleteTrainerById(id);
+        return ("redirect:/viewTrainers");
+    }
 
     /**
      * 
      * get trainer by id
      * 
-     * @param request, response
-     * @return void
+     * @param id, model
+     * @return UpdateTrainer
      */
-    public void getTrainerById(HttpServletRequest request, HttpServletResponse response) {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        Trainer trainer = employeeServiceImpl.getTrainerById(id);
-        request.setAttribute("trainer", trainer);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("UpdateTrainer.jsp");
-        try {
-            dispatcher.forward(request, response);
-        } catch (ServletException exception) {
-            exception.printStackTrace();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        } 
+    @RequestMapping(value = "/getTrainerById/{id}")
+    public String getTrainerById(@PathVariable int id, Model model) {
+        Trainer trainer = employeeService.getTrainerById(id);
+        model.addAttribute("command", trainer);
+        return ("UpdateTrainer");
     }
-    
-    /**
-     * 
-     * add trainee details to trainee object
-     * 
-     * @param request, response
-     * @return void
-     */
-    public void insertTrainee(HttpServletRequest request, HttpServletResponse response) {
-
-        int id = 0;
-
-        String name = request.getParameter("name");
-        String bloodGroup = request.getParameter("bloodGroup");
-
-        String date = request.getParameter("dateOfBirth");
-        Date dateOfBirth = Date.valueOf(date);
-
-        String designation = request.getParameter("designation");
-
-        String gender = request.getParameter("gender");
-
-        String number = request.getParameter("phoneNumber");
-        long phoneNumber = Long.parseLong(number);
-
-        String email = request.getParameter("email");
-
-        String traineeId = "0";
-
-        date = request.getParameter("dateOfJoining");
-        Date dateOfJoining = Date.valueOf(date);
-
-        Set<Skill> skills = new HashSet<Skill>();
-
-        Skill skillOne = new Skill();
-        
-        skillOne.setTraineeId(traineeId);
-
-        skillOne.setSkillName(request.getParameter("skillName1"));
-
-        String expirenece = request.getParameter("skillExperience1");
-        skillOne.setSkillExperience(Float.valueOf(expirenece));
-
-        skillOne.setSkillVersion(request.getParameter("skillVersion1"));
-
-        skillOne.setSkillCertification(request.getParameter("skillCertification1"));
-
-        skills.add(skillOne);
-        
-        Skill skillTwo = new Skill();
-
-        skillTwo.setTraineeId(traineeId);
-
-        skillTwo.setSkillName(request.getParameter("skillName2"));
-
-        expirenece = request.getParameter("skillExperience2");
-        skillTwo.setSkillExperience(Float.valueOf(expirenece));
-
-        skillTwo.setSkillVersion(request.getParameter("skillVersion2"));
-
-        skillTwo.setSkillCertification(request.getParameter("skillCertification2"));
-
-        skills.add(skillTwo);
-
-        Trainee trainee = new Trainee(id, name, bloodGroup, designation, dateOfBirth,
-                gender, phoneNumber, email, traineeId, dateOfJoining, skills);
-
-        id = employeeServiceImpl.insertTrainee(trainee);
-        
-        viewAllTrainee(request, response);
-    }
-
-    /**
-     * 
-     * shows all trainee
-     * 
-     * @param request, response
-     * @return void
-     */
-    public void viewAllTrainee(HttpServletRequest request, HttpServletResponse response) {
-        List<Trainee> trainees = employeeServiceImpl.viewAllTrainee();
-        request.setAttribute("traineeList", trainees);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ViewTrainees.jsp");
-        try {
-            dispatcher.forward(request, response);
-        } catch (ServletException exception) {
-            exception.printStackTrace();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-    }
-    
-    /**
-     * 
-     * update trainee by id
-     * 
-     * @param request, response
-     * @return void
-     */
-    public void updateTraineeById(HttpServletRequest request, HttpServletResponse response) {
-
-        String stringId = request.getParameter("id");
-        int id = Integer.parseInt(stringId);
-
-        String name = request.getParameter("name");
-        String bloodGroup = request.getParameter("bloodGroup");
-
-        String date = request.getParameter("dateOfBirth");
-        Date dateOfBirth = Date.valueOf(date);
-
-        String designation = request.getParameter("designation");
-
-        String gender = request.getParameter("gender");
-
-        String number = request.getParameter("phoneNumber");
-        long phoneNumber = Long.parseLong(number);
-
-        String email = request.getParameter("email");
-
-        String traineeId = "0";
-
-        date = request.getParameter("dateOfJoining");
-        Date dateOfJoining = Date.valueOf(date);
-
-        Set<Skill> skills = new HashSet<Skill>();
-
-        Skill skillOne = new Skill();
-        
-        skillOne.setTraineeId(traineeId);
-
-        skillOne.setSkillName(request.getParameter("skillName1"));
-
-        String expirenece = request.getParameter("skillExperience1");
-        skillOne.setSkillExperience(Float.valueOf(expirenece));
-
-        skillOne.setSkillVersion(request.getParameter("skillVersion1"));
-
-        skillOne.setSkillCertification(request.getParameter("skillCertification1"));
-
-        skills.add(skillOne);
-        
-        Skill skillTwo = new Skill();
-
-        skillTwo.setTraineeId(traineeId);
-
-        skillTwo.setSkillName(request.getParameter("skillName2"));
-
-        expirenece = request.getParameter("skillExperience2");
-        skillTwo.setSkillExperience(Float.valueOf(expirenece));
-
-        skillTwo.setSkillVersion(request.getParameter("skillVersion2"));
-
-        skillTwo.setSkillCertification(request.getParameter("skillCertification2"));
-
-        skills.add(skillTwo);
-
-        Trainee trainee = new Trainee(id, name, bloodGroup, designation, dateOfBirth,
-                gender, phoneNumber, email, traineeId, dateOfJoining, skills);
-        
-        employeeServiceImpl.updateTraineeById(trainee);
-        
-        try {
-            response.sendRedirect("http://localhost:8080/EmployeeManagement/TraineeController?flag=viewTrainees");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  
-    }
-
-    /**
-     * 
-     * delete trainee
-     * 
-     * @param request, response
-     * @return void
-     */
-    public void deleteTrainee(HttpServletRequest request, HttpServletResponse response) {
-        int id = Integer.parseInt(request.getParameter("id"));
-        boolean isIdExist = employeeServiceImpl.deleteTraineeById(id);
-        try {
-            response.sendRedirect("http://localhost:8080/EmployeeManagement/TraineeController?flag=viewTrainees");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  
-    }
-    
-    /**
-     * 
-     * get trainee by id
-     * 
-     * @param request, response
-     * @return void
-     */
-    public void getTraineeById(HttpServletRequest request, HttpServletResponse response) {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        Trainee trainee = employeeServiceImpl.getTraineeById(id);
-        request.setAttribute("trainee", trainee);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("UpdateTrainee.jsp");
-        try {
-            dispatcher.forward(request, response);
-        } catch (ServletException exception) {
-            exception.printStackTrace();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        } 
-    }
-
 }

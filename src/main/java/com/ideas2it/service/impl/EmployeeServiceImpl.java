@@ -12,8 +12,10 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.ideas2it.customexception.DatabaseNotFound;
-import com.ideas2it.dao.impl.EmployeeDaoImpl;
+import com.ideas2it.dao.EmployeeDao;
 import com.ideas2it.gender.Gender;
 import com.ideas2it.model.Trainee;
 import com.ideas2it.model.Trainer;
@@ -30,9 +32,14 @@ import com.ideas2it.service.EmployeeService;
 */
 public class EmployeeServiceImpl implements EmployeeService{
 
-    private EmployeeDaoImpl employeeDaoImpl = new EmployeeDaoImpl();
+    @Autowired
+    private EmployeeDao employeeDao;
     private Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);  
 
+    public void EmployeeDaoImpl(EmployeeDao employeeDao) {
+        this.employeeDao = employeeDao;
+    }
+    
     /**
      * 
      * pass Trainer Details insertTrainer method
@@ -44,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         int id = 0; 
         try {
-            id = employeeDaoImpl.insertTrainer(trainer);
+            id = employeeDao.insertTrainer(trainer);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }    
@@ -62,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         int id = 0;
         try {
-            id = employeeDaoImpl.insertTrainee(trainee);
+            id = employeeDao.insertTrainee(trainee);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -82,7 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         List<Trainer> trainers = new ArrayList<Trainer>();
 
         try {
-            trainers = employeeDaoImpl.viewAllTrainer();
+            trainers = employeeDao.viewAllTrainer();
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -101,7 +108,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         List<Trainee> trainees = new ArrayList<Trainee>();
 
         try {
-            trainees = employeeDaoImpl.viewAllTrainee();
+            trainees = employeeDao.viewAllTrainee();
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -120,7 +127,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         List<Trainee> trainees = new ArrayList<Trainee>();
 
         try {
-            trainees = employeeDaoImpl.SearchTraineeByName(name);
+            trainees = employeeDao.SearchTraineeByName(name);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -139,7 +146,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         boolean isIdExist = false;
         try {
-            isIdExist = employeeDaoImpl.deleteTrainerById(id);
+            isIdExist = employeeDao.deleteTrainerById(id);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -158,7 +165,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         boolean isIdExist = false;
         try {
-            isIdExist = employeeDaoImpl.deleteTraineeById(id);
+            isIdExist = employeeDao.deleteTraineeById(id);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -176,7 +183,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     public void updateTrainerById(Trainer trainer) {
 
         try {
-            employeeDaoImpl.updateTrainerById(trainer);
+            employeeDao.updateTrainerById(trainer);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -193,7 +200,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     public void updateTraineeById(Trainee trainee) {
 
         try {
-            employeeDaoImpl.updateTraineeById(trainee);
+            employeeDao.updateTraineeById(trainee);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -210,7 +217,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         Trainer trainer = null;
         try {
-            trainer = employeeDaoImpl.getTrainerById(id);
+            trainer = employeeDao.getTrainerById(id);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
@@ -228,7 +235,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         Trainee trainee = null;
         try {
-            trainee = employeeDaoImpl.getTraineeById(id);
+            trainee = employeeDao.getTraineeById(id);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
         }
