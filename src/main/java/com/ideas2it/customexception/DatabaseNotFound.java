@@ -10,7 +10,7 @@ import java.lang.Exception;
  */
 @SuppressWarnings("serial")
 public class DatabaseNotFound extends Exception  {
-    
+
     public DatabaseNotFound(String messege) {
         super(messege);
     }

@@ -1,5 +1,16 @@
 package com.ideas2it.service.impl;
 
+import com.ideas2it.customexception.DatabaseNotFound;
+import com.ideas2it.dao.EmployeeDao;
+import com.ideas2it.gender.Gender;
+import com.ideas2it.model.Skill;
+import com.ideas2it.model.Trainee;
+import com.ideas2it.model.Trainer;
+import com.ideas2it.service.EmployeeService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,59 +20,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.ideas2it.customexception.DatabaseNotFound;
-import com.ideas2it.dao.EmployeeDao;
-import com.ideas2it.gender.Gender;
-import com.ideas2it.model.Trainee;
-import com.ideas2it.model.Trainer;
-import com.ideas2it.service.EmployeeService;
-
 /**
-*
-* EmployeeService class have business logics
-* 
-* @version 1.0 01-09-2022
-*
-* @author Rohit A P
-* 
-*/
+ *
+ * EmployeeService class have business logics
+ *
+ * @version 1.0 01-09-2022
+ *
+ * @author Rohit A P
+ *
+ */
+@Component
 public class EmployeeServiceImpl implements EmployeeService{
 
-    @Autowired
     private EmployeeDao employeeDao;
-    private Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);  
 
-    public void EmployeeDaoImpl(EmployeeDao employeeDao) {
+    public EmployeeServiceImpl(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
     }
-    
+    private Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
+
     /**
-     * 
+     *
      * pass Trainer Details insertTrainer method
-     * 
+     *
      * @param trainer
      * @return void
      */
     public int insertTrainer(Trainer trainer) {
 
-        int id = 0; 
+        int id = 0;
         try {
             id = employeeDao.insertTrainer(trainer);
         } catch (DatabaseNotFound exception) {
             logger.warn(exception.getMessage());
-        }    
+        }
         return id;
     }
 
     /**
-     * 
+     *
      * pass Trainer Details insertTrainerDetails method
-     * 
+     *
      * @param trainee
      * @return void
      */
@@ -74,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.warn(exception.getMessage());
         }
         return id;
-        
+
     }
 
     /**
@@ -97,9 +96,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * viewAllTrainee method print every profile in Trainee
-     * 
+     *
      * @param
      * @return trainees
      */
@@ -116,9 +115,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * viewtraineeDetail method print every profile in Trainee
-     * 
+     *
      * @param
      * @return employeeDaoImpl.retrivetraineeDetail()
      */
@@ -136,8 +135,8 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     /**
      *
-     * deleteTrainer method gets Trainer ID as input and search Id Database,
-     * identifies that Id and delete Id details
+     * deleteTrainer method gets Trainer id as input and search id Database,
+     * identifies that id and delete id details
      *
      * @param id
      * @return void
@@ -207,9 +206,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * Get Trainer detail by Id
-     * 
+     *
      * @param id
      * @return trainer
      */
@@ -225,9 +224,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * Get Trainer detail by Id
-     * 
+     *
      * @param id
      * @return trainee
      */
@@ -243,34 +242,34 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * used to select gender
-     * 
+     *
      * @param option
-     * @return String
+     * @return gender
      */
     public String selectGender(int option) {
 
         String gender = "";
 
         switch (option) {
-        case 1:
-            return gender = Gender.MALE.toString();
-        case 2:
-            return gender = Gender.FEMALE.toString();
-        case 3:
-            return gender = Gender.OTHERS.toString();
-        default:
-            System.out.println("Invalid option");
-            break;
+            case 1:
+                return gender = Gender.MALE.toString();
+            case 2:
+                return gender = Gender.FEMALE.toString();
+            case 3:
+                return gender = Gender.OTHERS.toString();
+            default:
+                System.out.println("Invalid option");
+                break;
         }
         return gender;
     }
 
     /**
-     * 
+     *
      * Calculate age
-     * 
+     *
      * @param
      * @return age
      */
@@ -282,11 +281,11 @@ public class EmployeeServiceImpl implements EmployeeService{
         int age = Period.between(dob, currentDate).getYears();
         return age;
     }
-    
+
     /**
-     * 
+     *
      * reverse date
-     * 
+     *
      * @param date
      * @return reverseDate
      */
@@ -301,14 +300,14 @@ public class EmployeeServiceImpl implements EmployeeService{
             e.printStackTrace();
         }
         return reverseDate;
-        
+
     }
-    
+
     /**
-     * 
+     *
      * Validate name
-     * 
-     * @param id
+     *
+     * @param name
      * @return status
      */
     public boolean isValidName(String name) {
@@ -318,9 +317,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * Validate phone number
-     * 
+     *
      * @param phoneNumber
      * @return status
      */
@@ -331,9 +330,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * Validate date
-     * 
+     *
      * @param date
      * @return status
      */
@@ -350,9 +349,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * Validate email
-     * 
+     *
      * @param eMail
      * @return status
      */
@@ -363,9 +362,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     /**
-     * 
+     *
      * Validate age
-     * 
+     *
      * @param age
      * @return status
      */

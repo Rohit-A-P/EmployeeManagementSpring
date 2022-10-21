@@ -1,20 +1,20 @@
 package com.ideas2it.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.ideas2it.customexception.DatabaseNotFound;
+import com.ideas2it.dao.EmployeeDao;
+import com.ideas2it.model.Skill;
+import com.ideas2it.model.Trainee;
+import com.ideas2it.model.Trainer;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.ideas2it.customexception.DatabaseNotFound;
-import com.ideas2it.dao.EmployeeDao;
-import com.ideas2it.model.Trainee;
-import com.ideas2it.model.Trainer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * EmployeeDaoImpl manage insert, retrieve, delete and update operation
@@ -23,21 +23,17 @@ import com.ideas2it.model.Trainer;
  *
  * @author Rohit A P
  */
+@Component
 public class EmployeeDaoImpl implements EmployeeDao {
- 
-    @Autowired
-    private SessionFactory sessionFactory;
-    
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-    
+    private SessionFactory sessionFactory
+            = new Configuration().configure("hibernate/properties/hibernate.cfg.xml")
+            .buildSessionFactory();
     private Session session = null;
-    
+
     /**
-     * 
+     *
      * add trainer details to database
-     * 
+     *
      * @param trainer
      * @return void
      */
@@ -61,10 +57,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * add trainee details to database
-     * 
-     * @param Trainee trainee
+     *
+     * @param trainee
      * @return void
      */
     public int insertTrainee(Trainee trainee) throws DatabaseNotFound {
@@ -82,14 +78,22 @@ public class EmployeeDaoImpl implements EmployeeDao {
             throw new DatabaseNotFound("Server under maintenance");
         } finally {
             session.close();
-        }  
+        }
         return id;
     }
 
     /**
-     * 
+     *
+     * add trainee details to database
+     *
+     * @param skill, id
+     * @return void
+     */
+
+    /**
+     *
      * shows every trainer detail
-     * 
+     *
      * @param
      * @return trainers
      */
@@ -115,15 +119,15 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * shows every trainee detail
-     * 
+     *
      * @param
      * @return trainees
      */
     public List<Trainee> viewAllTrainee() throws DatabaseNotFound {
         List<Trainee> trainees = new ArrayList<Trainee>();
-        Transaction transaction = null; 
+        Transaction transaction = null;
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
@@ -143,9 +147,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * shows every trainee detail with given name
-     * 
+     *
      * @param name
      * @return trainees
      */
@@ -173,9 +177,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * delete trainer detail
-     * 
+     *
      * @param id
      * @return isIdExist
      */
@@ -204,9 +208,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * delete trainee detail
-     * 
+     *
      * @param id
      * @return isIdExist
      */
@@ -220,7 +224,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
             session.delete(trainee);
             trainee = session.get(Trainee.class, id);
             if(trainee == null) {
-                isIdExist = true; 
+                isIdExist = true;
             }
             transaction.commit();
         } catch (HibernateException exception) {
@@ -235,10 +239,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * update Employee
-     * 
-     * @param employee
+     *
+     * @param trainer
      * @return void
      */
     public void updateTrainerById(Trainer trainer) throws DatabaseNotFound {
@@ -259,9 +263,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * update Trainee
-     * 
+     *
      * @param trainee
      * @return void
      */
@@ -283,9 +287,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * gets trainer profile by getting trainer id
-     * 
+     *
      * @param id
      * @return trainer
      */
@@ -310,16 +314,16 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     /**
-     * 
+     *
      * gets trainee profile by getting trainee id
-     * 
+     *
      * @param id
      * @return trainee
      */
     public Trainee getTraineeById(int id) throws DatabaseNotFound {
         Trainee trainee = null;
         Transaction transaction = null;
-        try { 
+        try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             trainee = session.get(Trainee.class, id);
@@ -334,4 +338,4 @@ public class EmployeeDaoImpl implements EmployeeDao {
         }
         return trainee;
     }
-}
+ }

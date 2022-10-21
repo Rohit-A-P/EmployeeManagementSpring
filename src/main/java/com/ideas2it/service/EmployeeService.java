@@ -1,10 +1,11 @@
 package com.ideas2it.service;
 
-import java.sql.Date;
-import java.util.List;
-
+import com.ideas2it.model.Skill;
 import com.ideas2it.model.Trainee;
 import com.ideas2it.model.Trainer;
+
+import java.sql.Date;
+import java.util.List;
 
 /**
  *
@@ -13,28 +14,28 @@ import com.ideas2it.model.Trainer;
  * @version 1.0 01-09-2022
  *
  * @author Rohit A P
- * 
+ *
  */
 public interface EmployeeService {
 
     /**
-     * 
+     *
      * pass Trainer Details insertTrainer method
-     * 
+     *
      * @param trainer
-     * @return void
+     * @return isIdInserted
      */
     public int insertTrainer(Trainer trainer);
 
     /**
-     * 
-     * pass Trainer Details insertTrainerDetails method
-     * 
+     *
+     * pass Trainee object insertTrainee method
+     *
      * @param trainee
-     * @return void
+     * @return isIdInserted
      */
-    public int insertTrainee(Trainee trainee); 
-
+    public int insertTrainee(Trainee trainee);
+    
     /**
      *
      * viewAllTrainer method print every profile in Trainer
@@ -45,18 +46,18 @@ public interface EmployeeService {
     public List<Trainer> viewAllTrainer();
 
     /**
-     * 
+     *
      * viewAllTrainee method print every profile in Trainee
-     * 
+     *
      * @param
      * @return trainees
      */
     public List<Trainee> viewAllTrainee();
 
     /**
-     * 
+     *
      * viewtraineeDetail method print every profile in Trainee
-     * 
+     *
      * @param
      * @return employeeDao.retrivetraineeDetail()
      */
@@ -103,90 +104,90 @@ public interface EmployeeService {
     public void updateTraineeById(Trainee trainee);
 
     /**
-     * 
+     *
      * Get Trainer detail by Id
-     * 
+     *
      * @param id
      * @return trainer
      */
     public Trainer getTrainerById(int id);
 
     /**
-     * 
+     *
      * Get Trainer detail by Id
-     * 
+     *
      * @param id
      * @return trainee
      */
     public Trainee getTraineeById(int id);
 
     /**
-     * 
+     *
      * used to select gender
-     * 
+     *
      * @param option
      * @return String
      */
     public String selectGender(int option);
 
     /**
-     * 
+     *
      * Calculate age
-     * 
+     *
      * @param
      * @return age
      */
     public int calculateAge(Date date);
-    
+
     /**
-     * 
+     *
      * reverse date
-     * 
+     *
      * @param date
      * @return reverseDate
      */
     public String reverseDate(String date);
-    
+
     /**
-     * 
+     *
      * Validate name
-     * 
-     * @param id
+     *
+     * @param name
      * @return status
      */
     public boolean isValidName(String name);
 
     /**
-     * 
+     *
      * Validate phone number
-     * 
+     *
      * @param phoneNumber
      * @return status
      */
     public boolean isValidPhoneNumber(Long phoneNumber);
 
     /**
-     * 
+     *
      * Validate date
-     * 
+     *
      * @param date
      * @return status
      */
     public boolean isValidDate(String date);
 
     /**
-     * 
+     *
      * Validate email
-     * 
+     *
      * @param eMail
      * @return status
      */
     public boolean isValidEmail(String eMail);
 
     /**
-     * 
+     *
      * Validate age
-     * 
+     *
      * @param age
      * @return status
      */
