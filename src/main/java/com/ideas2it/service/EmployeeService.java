@@ -1,10 +1,8 @@
 package com.ideas2it.service;
 
-import com.ideas2it.model.Skill;
 import com.ideas2it.model.Trainee;
 import com.ideas2it.model.Trainer;
 
-import java.sql.Date;
 import java.util.List;
 
 /**
@@ -22,7 +20,7 @@ public interface EmployeeService {
      *
      * pass Trainer Details insertTrainer method
      *
-     * @param trainer
+     * @param trainer is used to store trainer details
      * @return isIdInserted
      */
     public int insertTrainer(Trainer trainer);
@@ -31,7 +29,7 @@ public interface EmployeeService {
      *
      * pass Trainee object insertTrainee method
      *
-     * @param trainee
+     * @param trainee is used to store trainee details
      * @return isIdInserted
      */
     public int insertTrainee(Trainee trainee);
@@ -40,7 +38,6 @@ public interface EmployeeService {
      *
      * viewAllTrainer method print every profile in Trainer
      *
-     * @param
      * @return trainers
      */
     public List<Trainer> viewAllTrainer();
@@ -49,26 +46,25 @@ public interface EmployeeService {
      *
      * viewAllTrainee method print every profile in Trainee
      *
-     * @param
      * @return trainees
      */
     public List<Trainee> viewAllTrainee();
 
     /**
      *
-     * viewtraineeDetail method print every profile in Trainee
+     * view trainee Detail method print every profile in Trainee
      *
-     * @param
-     * @return employeeDao.retrivetraineeDetail()
+     * @param name is used to search trainee by name
+     * @return employeeDao.retrieve trainee Detail
      */
     public List<Trainee> SearchTraineeByName(String name);
 
     /**
      *
-     * deleteTrainer method gets Trainer ID as input and search Id Database,
-     * identifies that Id and delete Id details
+     * deleteTrainer method gets Trainer ID as input and search id Database,
+     * identifies that id and delete id details
      *
-     * @param id
+     * @param id is used to delete trainer by id
      * @return void
      */
     public boolean deleteTrainerById(int id);
@@ -76,9 +72,9 @@ public interface EmployeeService {
     /**
      *
      * deleteTrainee method gets Trainee ID as input and search Id in Database,
-     * identifies that Id and delete Id details
+     * identifies that id and delete id details
      *
-     * @param id
+     * @param id is used to delete trainee by it
      * @return isIdExist
      */
     public boolean deleteTraineeById(int id);
@@ -88,7 +84,7 @@ public interface EmployeeService {
      * update Trainer
      *
      *
-     * @param trainer
+     * @param trainer used to update trainer
      * @return void
      */
     public void updateTrainerById(Trainer trainer);
@@ -98,7 +94,7 @@ public interface EmployeeService {
      * update trainee
      *
      *
-     * @param trainee
+     * @param trainee used to update trainee
      * @return void
      */
     public void updateTraineeById(Trainee trainee);
@@ -107,16 +103,16 @@ public interface EmployeeService {
      *
      * Get Trainer detail by Id
      *
-     * @param id
+     * @param id used to get trainer by id
      * @return trainer
      */
     public Trainer getTrainerById(int id);
 
     /**
      *
-     * Get Trainer detail by Id
+     * Get Trainee detail by id
      *
-     * @param id
+     * @param id get trainee by id
      * @return trainee
      */
     public Trainee getTraineeById(int id);
@@ -125,7 +121,7 @@ public interface EmployeeService {
      *
      * used to select gender
      *
-     * @param option
+     * @param option select gender
      * @return String
      */
     public String selectGender(int option);
@@ -134,16 +130,16 @@ public interface EmployeeService {
      *
      * Calculate age
      *
-     * @param
+     * @param date string date
      * @return age
      */
-    public int calculateAge(Date date);
+    public int calculateAge(String date);
 
     /**
      *
      * reverse date
      *
-     * @param date
+     * @param date reverse date(yyyy-mm-dd to dd-mm-yyyy)
      * @return reverseDate
      */
     public String reverseDate(String date);
@@ -152,7 +148,7 @@ public interface EmployeeService {
      *
      * Validate name
      *
-     * @param name
+     * @param name validate name
      * @return status
      */
     public boolean isValidName(String name);
@@ -161,7 +157,7 @@ public interface EmployeeService {
      *
      * Validate phone number
      *
-     * @param phoneNumber
+     * @param phoneNumber validate phone number
      * @return status
      */
     public boolean isValidPhoneNumber(Long phoneNumber);
@@ -170,7 +166,7 @@ public interface EmployeeService {
      *
      * Validate date
      *
-     * @param date
+     * @param date used to check date format
      * @return status
      */
     public boolean isValidDate(String date);
@@ -179,7 +175,7 @@ public interface EmployeeService {
      *
      * Validate email
      *
-     * @param eMail
+     * @param eMail used to validate email
      * @return status
      */
     public boolean isValidEmail(String eMail);
@@ -188,7 +184,7 @@ public interface EmployeeService {
      *
      * Validate age
      *
-     * @param age
+     * @param age validate age
      * @return status
      */
     public boolean isValidAge(int age);

@@ -3,7 +3,6 @@ package com.ideas2it.service.impl;
 import com.ideas2it.customexception.DatabaseNotFound;
 import com.ideas2it.dao.EmployeeDao;
 import com.ideas2it.gender.Gender;
-import com.ideas2it.model.Skill;
 import com.ideas2it.model.Trainee;
 import com.ideas2it.model.Trainer;
 import com.ideas2it.service.EmployeeService;
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -273,10 +271,8 @@ public class EmployeeServiceImpl implements EmployeeService{
      * @param
      * @return age
      */
-    public int calculateAge(Date date) {
-
-        String dateString = date.toString();
-        LocalDate dob = LocalDate.parse(dateString);
+    public int calculateAge(String date) {
+        LocalDate dob = LocalDate.parse(date);
         LocalDate currentDate = LocalDate.now();
         int age = Period.between(dob, currentDate).getYears();
         return age;
@@ -290,7 +286,6 @@ public class EmployeeServiceImpl implements EmployeeService{
      * @return reverseDate
      */
     public String reverseDate(String date) {
-
         SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
         String reverseDate = null;
@@ -341,8 +336,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         String format = "([1-2][0-9]{3})-([0][1-9]|[1][0-2])-([0][1-9]|[1][0-9]|[2][0-9]|[3][0-1])";
         boolean status = Pattern.matches(format, date);
         if(status == true) {
-            Date isValidDate = Date.valueOf(date);
-            int age = calculateAge(isValidDate);
+            int age = calculateAge(date);
             status = isValidAge(age);
         }
         return status;

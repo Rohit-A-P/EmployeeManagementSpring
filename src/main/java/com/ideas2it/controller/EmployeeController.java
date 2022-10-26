@@ -1,18 +1,21 @@
 package com.ideas2it.controller;
 
-import com.ideas2it.model.Skill;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ideas2it.model.Skill;
 import com.ideas2it.model.Trainee;
 import com.ideas2it.model.Trainer;
 import com.ideas2it.service.EmployeeService;
@@ -95,34 +98,30 @@ public class EmployeeController {
     public String addSkill(@ModelAttribute("skill") Skill skill, int id) {
 
         Trainee trainee = employeeService.getTraineeById(id);
-        String name = trainee.getName();
-        String bloodGroup = trainee.getBloodGroup();
-        String dateOfBirth = trainee.getDateOfBirth();
-        String designation = trainee.getDesignation();
-        String gender = trainee.getGender();
-        Long phoneNumber = trainee.getPhoneNumber();
-        String email = trainee.getEmail();
-        String traineeId = trainee.getTraineeId();
-        String dateOfJoining = trainee.getDateOfJoining();
         Set<Skill> skills = new HashSet<Skill>();
         skills.add(skill);
-        Trainee updateTrainee = new Trainee(id, name, bloodGroup, designation, dateOfBirth,
-                gender, phoneNumber, email, traineeId, dateOfJoining, skills);
-        employeeService.updateTraineeById(updateTrainee);
-        return ("redirect:/viewTrainees");
+        trainee.setSkills(skills);
+        employeeService.updateTraineeById(trainee);
+        return ("redirect:/ViewTrainees");
     }
 
     /**
      * shows all trainers
      *
-     * @param model to store list in model
      * @return ViewTrainees
      */
     @RequestMapping("/ViewTrainees")
-    public String viewTrainees(Model model) {
+    public ModelAndView viewTrainees() {
         List<Trainee> trainees = employeeService.viewAllTrainee();
-        model.addAttribute("traineeList", trainees);
-        return ("ViewTrainees");
+        List<Integer> ageList = new ArrayList<Integer>();
+        for(Trainee trainee : trainees) {
+            ageList.add(employeeService.calculateAge(trainee.getDateOfBirth()));
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("traineeList", trainees);
+        modelAndView.addObject("ageList", ageList);
+        modelAndView.setViewName("ViewTrainees");
+        return modelAndView;
     }
 
     /**
@@ -131,8 +130,11 @@ public class EmployeeController {
      * @param trainee passing trainee object to update
      * @return redirect:/ViewTrainees
      */
-    @RequestMapping("/updateTraineeById")
+    @RequestMapping("/UpdateTraineeById")
     public String updateTraineeById(@ModelAttribute("trainee") Trainee trainee) {
+        Trainee traineeOld = employeeService.getTraineeById(trainee.getId());
+        Set<Skill> skills = traineeOld.getSkills();
+        trainee.setSkills(skills);
         employeeService.updateTraineeById(trainee);
         return ("redirect:/ViewTrainees");
     }
@@ -153,14 +155,15 @@ public class EmployeeController {
      * get trainee by id
      *
      * @param id get trainee by id
-     * @param model is used to store trainee object
      * @return UpdateTrainee
      */
     @RequestMapping(value = "/getTraineeById")
-    public String getTraineeById(@RequestParam int id, Model model) {
+    public ModelAndView getTraineeById(@RequestParam int id) {
         Trainee trainee = employeeService.getTraineeById(id);
-        model.addAttribute("trainee", trainee);
-        return ("UpdateTrainee");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("trainee", trainee);
+        modelAndView.setViewName("UpdateTrainee");
+        return modelAndView;
     }
 
     /**
@@ -182,7 +185,6 @@ public class EmployeeController {
      */
     @RequestMapping("/SaveTrainer")
     public ModelAndView TrainerForm() {
-        System.out.print("hi");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("trainer", new Trainer());
         modelAndView.addObject("action", "insertTrainer");
@@ -209,12 +211,19 @@ public class EmployeeController {
      * @return viewTrainers
      */
     @RequestMapping ("/ViewTrainers")
-    public ModelAndView viewTrainee() {
+    public ModelAndView viewTrainers() {
         List<Trainer> trainers = employeeService.viewAllTrainer();
-        ModelAndView modelAndView = new ModelAndView("ViewTrainers");
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("trainerList", trainers);
+        List<Integer> ageList = new ArrayList<Integer>();
+        for(Trainer trainer : trainers) {
+            ageList.add(employeeService.calculateAge(trainer.getDateOfBirth()));
+        }
+        modelAndView.addObject("ageList", ageList);
+        modelAndView.setViewName("ViewTrainers");
         return modelAndView;
     }
+
     /**
      * update trainer
      *
@@ -223,9 +232,8 @@ public class EmployeeController {
      */
     @RequestMapping("/UpdateTrainerById")
     public String updateTrainerById(@ModelAttribute("trainer") Trainer trainer) {
-        System.out.print(trainer);
         employeeService.updateTrainerById(trainer);
-        return ("redirect:/viewTrainers");
+        return ("redirect:/ViewTrainers");
     }
 
     /**
@@ -252,7 +260,6 @@ public class EmployeeController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("trainer", trainer);
         modelAndView.setViewName("UpdateTrainer");
-        System.out.print(trainer);
         return modelAndView;
     }
 }
